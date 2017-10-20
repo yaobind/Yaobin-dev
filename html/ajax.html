@@ -1,0 +1,31 @@
+<html>
+<head>
+    <script
+    src="https://code.jquery.com/jquery-3.2.1.js"
+    integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <button onclick="fetch()">fetch</button>
+    <p id="content">loading...</p>
+    <ul id="list"></ul>
+    
+    <script  type="text/javascript">
+        var fetch = function() {
+            $.get("http://demo9043759.mockable.io/hello", function(data) {
+            //$("#content").text(data.data.items[0].name);
+            data.data.items.forEach(function(item) {
+                $("#list").append(`<li>${item.name}</li>`);
+                $("#list").append(`<li>${item.position}</li>`);
+            });
+            console.log(data);
+            });
+        }
+    
+    
+    </script>
+</body>
+
+
+</html>
