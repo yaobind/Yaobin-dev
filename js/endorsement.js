@@ -7,11 +7,13 @@ let endorsements = [
     {skill: 'html', user: 'Sue'},
 ];
 
+
+//input validation??? ask interviewer
 function groupBySkill(arr) {
     let result = [];
     let skillMap = {};
     arr.forEach(function(e) {
-        if (skillMap[e.skill] === undefined) {
+        if (!(e.skill in skillMap)) {
             skillMap[e.skill] = [];
         }
         skillMap[e.skill].push(e.user);
@@ -21,7 +23,10 @@ function groupBySkill(arr) {
         result.push({skill: e, user: skillMap[e], count: skillMap[e].length});
     })
 
+    result.sort(function(a, b) {return b.count - a.count;});
+
     return result;
 }
 
-groupBySkill(endorsements);
+
+console.log(groupBySkill(endorsements));
