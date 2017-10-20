@@ -1,0 +1,88 @@
+<div id="slider"></div>
+<div id="showval">0</div>
+
+//js
+var conf = [
+    {val: 0, label: 'cold'}, 
+    {val: 375, label: 'medium'}, 
+    {val: 500, label:'hot'}
+  ];
+
+$.fn.sliderit = function(config) {
+  var labels = config;
+  var min = labels[0].val;
+  var max = labels[labels.length - 1].val;
+
+	var container = $(this);
+
+
+//better to avoid selector
+  //$(".slider").attr('max', max);
+  //$(".slider").attr('min', min);
+  //$(".slider").attr('value', min); 
+  var slider = $(`<input type="range" max="${max}" min="${min}" value="${min}" class="slider">`);
+    
+    //attach eventlistener before append, avoid selector 
+  slider.on('input', function() {
+  	 var value = this.value;
+     this.value = labels.reduce(function(prev,curt) {
+        var prevDiff = Math.abs(prev.val - value);
+        var curtDiff = Math.abs(curt.val - value);
+        return prevDiff <= curtDiff ? prev : curt;
+     }).val;   
+     
+    $("#showval").text(this.value);
+  }) 
+  
+  container.append(slider);
+  
+  labels.forEach(function(labelitem, index) {
+   		var el = $(`<label>${labelitem.label}</label>`).css('left',(labelitem.val/max * 100) + '%');
+    	container.append(el);
+  });
+};
+
+$( "#slider" ).sliderit(conf);
+
+
+// css
+#slider label {
+    position: absolute;
+    width: 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-top: 20px;
+}
+
+/* below is not necessary, just for style */
+#slider {
+    width: 50%;
+    margin: 2em auto;
+    border: solid  2px blue;
+    border-radius: 5px;
+    position: relative;
+}
+
+.slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 50px;
+    background: #d3d3d3;
+    outline: none;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 25px;
+    height: 25px;
+    background: #4CAF50;
+    cursor: pointer;
+}
