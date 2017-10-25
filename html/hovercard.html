@@ -21,6 +21,8 @@
 
 .hovercard {
   width: 350px;
+  /*should not set height to a flex box, this is just for jquery.height() to get a value to update hovercard position*/
+  height: 200px;
   padding: 0;
 }
 
@@ -219,9 +221,9 @@ button {
                       console.log(entityName);
                       var targetPosition = $(this).offset();
                       var tooltipWidth = $(".hovercard").width();
-                      var tooltipHeight = $(".hovercard").height();
+                      var tooltipHeight = $(".hovercard").outerHeight(true);
                       var updatedLeft = targetPosition.left - tooltipWidth;
-                      var updatedTop = targetPosition.top - tooltipHeight;
+                      var updatedTop = targetPosition.top - tooltipHeight / 2;
                       $(".container").removeClass("hidden");
                       $(".hovercard").css("left", updatedLeft + 'px');
                       $(".hovercard").css("top", updatedTop + 'px');
