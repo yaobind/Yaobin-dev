@@ -1,5 +1,14 @@
 <html>
     <head>
+
+          <script
+    src="https://code.jquery.com/jquery-3.2.1.js"
+    integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+    crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+
+
         <style>
         .container {
   height: 0;
@@ -7,12 +16,39 @@
 }
 
 .hidden {
-/*   display: none; */
+   display: none; 
 }
 
 .hovercard {
   width: 350px;
   padding: 0;
+}
+
+/* this is the little triangle */
+/* .hovercard:after {
+  border-left: solid transparent 10px;
+  border-right: solid transparent 10px;
+  border-top: solid beige 10px;
+  bottom: -10px;
+  content: " ";
+  height: 0;
+  left: 50%;
+  margin-left: -13px;
+  position: absolute;
+  width: 0;
+} */
+
+.hovercard:after {
+  border-top: solid transparent 10px;
+  border-bottom: solid transparent 10px;
+  border-left: solid beige 10px;
+  right: -10px;
+  content: " ";
+  height: 0;
+  top: 50%;
+  margin-top: -13px;
+  position: absolute;
+  width: 0;
 }
 
 .hovercard, .hovercard-left {
@@ -22,7 +58,6 @@
   border-radius: 10px;
   z-index: 999;
   max-width: 320px;
-  /* overflow: hidden; */
   background-clip: padding-box;
 } 
 
@@ -40,10 +75,16 @@
 
 .info-container {
   padding: 16px 16px 0 16px;
+  /* flex properties */
+  /* justify-content: center; */
+  /* align-items: center; */
+  /* flex-flow: row nowrap; */
 }
 
 .picture-container {
   /* max-width: -webkit-fit-content; */
+  order: -1;
+  flex: auto;
 }
 
 .photo-circle {
@@ -56,7 +97,8 @@
 }
 
 .info {
-  /* flex: 1 1 auto; */
+  flex: auto;
+  margin: 0;
   margin-left: 8px;
 }
 
@@ -64,6 +106,7 @@
   position: relative;
   font-weight: 600;
   font-size: 15px;
+  margin: 0;
 }
 
 .entity-name {
@@ -78,6 +121,7 @@
 
 .full-width {
   width: 100%;
+  box-sizing: border-box;
 }
 
 .display-flex {
@@ -90,7 +134,7 @@
   border-top: 1px solid black;
   color: black;
   min-width: 50%;
-  box-sizing: border-box;
+  box-sizing: border-box; 
   height: 60px;
   background-color: transparent;
 }
@@ -107,14 +151,32 @@ button {
   cursor: pointer;
 }
 
+/*for the entity list  */
+.main-content {
+  position: relative;
+  left: 500px;
+  top: 500px;
+  /* display: flex;  */
+}
 
+.list-item {
+  margin-bottom: 50px;
+}
 
 
         </style>
     </head>
 
     <body>
-        how to align better, learn more flexbox, the subtitle overflow???
+      <section class="main-content">
+        <ul class="entity-list">
+          <li class="list-item"><a href="yaobin/link" class="entity">Yaobin</a></li>
+          <li class="list-item"><a href="tuo/link" class="entity">Tuo</a></li>
+          <li class="list-item"><a href="ling/link" class="entity">Ling</a></li>
+          <li class="list-item"><a href="gaurav/link" class="entity">Gaurav</a></li>
+        </ul>
+      </section>
+
         <div class="container hidden">
             <div class="hovercard hovercard-left active" role="tooltip" tabindex="-1" style="top:100px; left:12px">
               <section class="info-container full-width display-flex">
@@ -146,6 +208,34 @@ button {
               </section>
             </div>
             
-          </div>
+        </div>
+
+
+          <script  type="text/javascript">
+
+              $(document).ready(function() {
+                  $(".entity-list").on("mouseenter", ".entity", function(){
+                      var entityName = $(this).text();//or html
+                      console.log(entityName);
+                      var targetPosition = $(this).offset();
+                      var tooltipWidth = $(".hovercard").width();
+                      var tooltipHeight = $(".hovercard").height();
+                      var updatedLeft = targetPosition.left - tooltipWidth;
+                      var updatedTop = targetPosition.top - tooltipHeight;
+                      $(".container").removeClass("hidden");
+                      $(".hovercard").css("left", updatedLeft + 'px');
+                      $(".hovercard").css("top", updatedTop + 'px');
+                  });
+
+                  $(".entity-list").on("mouseleave", ".entity", function(){
+                    console.log("out!!");
+                      $(".container").addClass("hidden");
+                  });
+
+
+
+              });
+
+          </script>
     </body>
 </html>
