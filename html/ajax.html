@@ -4,24 +4,154 @@
     src="https://code.jquery.com/jquery-3.2.1.js"
     integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
     crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+
+    <style>
+    body {
+   background: #444444;
+   color: white;
+   font: 15px/1.51 system, -apple-system, ".SFNSText-Regular", "San Francisco", "Roboto", "Segoe UI", "Helvetica Neue", "Lucida Grande", sans-serif;
+   margin:0 auto;
+   max-width:600px;
+   padding:20px;
+}
+.item {
+  border:4px solid white;
+  height:120px;
+  width:100%;
+  margin-bottom:50px;
+  background:#333;
+  padding:20px;
+}
+
+.color-1 { border-color: #9BFFBB}
+.color-2 { border-color: #B9C6FF}
+.color-3 { border-color: #FFA3D8}
+.color-4 { border-color: #FF8E9B}
+
+#list {
+    height: 500px; 
+    overflow: scroll;
+}
+    
+</style>
 </head>
 
 <body>
     <button onclick="fetch()">fetch</button>
+    <p id="scrollCount">0</p>
+    <p id="pageCount">0</p>
     <p id="content">loading...</p>
     <ul id="list"></ul>
     
+    <!-- <h1>Infinite scrolling throttled</h1>
+    <div class="item color-1">Block 1</div>
+    <div class="item color-2">Block 2</div>
+    <div class="item color-3">Block 3</div>
+    <div class="item color-4">Block 4</div> -->
+
+
+
+
+
     <script  type="text/javascript">
         var fetch = function() {
-            $.get("http://demo9043759.mockable.io/hello", function(data) {
+            $.get("http://demo9043759.mockable.io/hello", function(response) {
             //$("#content").text(data.data.items[0].name);
-            data.data.items.forEach(function(item) {
+            response.data.items.forEach(function(item) {
                 $("#list").append(`<li>${item.name}</li>`);
                 $("#list").append(`<li>${item.position}</li>`);
             });
-            console.log(data);
+            console.log(response);
             });
         }
+
+        $(document).ready(function(){
+        let page = 0;
+        let scrollCount = 0
+        // Check every 200ms the scroll position
+        $("#list").on('scroll', throttle2(function(){
+            if (page >= 30) {//flag to stop loading
+                $("#list").off('scroll');
+            }
+            check_if_needs_more_content();
+            $("#pageCount").text(page);
+        }, 500));
+
+        // function throttle(fn, wait) {
+        //     var time = Date.now();
+        //     return function() {
+        //         scrollCount++;
+        //         $("#scrollCount").text(scrollCount);
+        //         if ((time + wait - Date.now()) < 0) {
+        //             fn();
+        //             time = Date.now();
+        //         }
+        //     }
+        // }
+        
+        //need both leading and trailings
+        function throttle2 (callback, limit) {
+            var wait = false;                  // Initially, we're not waiting
+            return function () {               // We return a throttled function
+                scrollCount++;
+                $("#scrollCount").text(scrollCount);
+                if (!wait) {                   // If we're not waiting
+                    //leading 
+                    callback.call();           // Execute users function
+                    wait = true;               // Prevent future invocations
+                    setTimeout(function () {   // After a period of time
+                        wait = false;
+                        //trailing
+                        callback.call();          // And allow future invocations
+                    }, limit);
+                }
+            }
+        }
+        
+        var check_if_needs_more_content = (function() {
+            var cachedPromise = undefined;
+            return function () {     
+                pixelsFromWindowBottomToBottom = $("#list")[0].scrollHeight - $("#list").scrollTop() - $("#list").height();
+            // console.log($(document).height());
+            // console.log($(window).scrollTop());
+            // console.log($(window).height());
+            //console.log(pixelsFromWindowBottomToBottom);
+                
+                
+                if (pixelsFromWindowBottomToBottom < 10){
+                    page++;
+                    // Here it would go an ajax request
+                    //use promise instead of callback
+
+                    if (!cachedPromise) {
+                        cachedPromise = $.get("http://demo9043759.mockable.io/hello").promise();
+                    }
+
+                    //$.get("http://demo9043759.mockable.io/hello").promise().then(
+                    cachedPromise.then(
+                        function(response) {
+                            //flag to stop loading, when everything is loaded
+                            //if (response.data.total == response.data.start + response.data.count) { $(#list).off('scroll');
+                            var documentFragment = $(document.createDocumentFragment());//minimize reflow
+                            response.data.items.forEach(function(item) {
+                                documentFragment.append(`<li>${item.name}</li>`);
+                                documentFragment.append(`<li>${item.position}</li>`);
+                            });
+                            $("#list").append(documentFragment);
+                            console.log(response);
+                        },
+                        function(error) {
+                            console.log(error);
+                        }
+                    );
+                
+                }
+            }
+        })();
+
+        });
     
     
     </script>

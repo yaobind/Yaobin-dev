@@ -1,0 +1,151 @@
+<html>
+    <head>
+        <style>
+        .container {
+  height: 0;
+  overflow: hidden;
+}
+
+.hidden {
+/*   display: none; */
+}
+
+.hovercard {
+  width: 350px;
+  padding: 0;
+}
+
+.hovercard, .hovercard-left {
+  color: black;
+  font-size: 15px;
+  background-color: beige;
+  border-radius: 10px;
+  z-index: 999;
+  max-width: 320px;
+  /* overflow: hidden; */
+  background-clip: padding-box;
+} 
+
+.hovercard-left {
+  opacity: 1;
+  position: absolute;
+  visibility: visible;
+}
+
+/*shortcut for .hovercard-left[class~="active"]*/
+.hovercard-left.active{
+  opacity: 1;
+  visibility: visible;
+}
+
+.info-container {
+  padding: 16px 16px 0 16px;
+}
+
+.picture-container {
+  /* max-width: -webkit-fit-content; */
+}
+
+.photo-circle {
+  width: 56px;
+  height: 56px;
+  border: 1px solid black;
+  border-radius: 49.9%;
+  background-image: url("https://gravatar.com/avatar/81b0089f159936f3de75eb530463f0ad?s=80&d=https://codepen.io/assets/avatars/user-avatar-80x80-bdcd44a3bfb9a5fd01eb8b86f9e033fa1a9897c3a15b33adfc2649a002dab1b6.png");
+  background-clip: content-box;
+}
+
+.info {
+  /* flex: 1 1 auto; */
+  margin-left: 8px;
+}
+
+.title-container {
+  position: relative;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.entity-name {
+  text-decoration: none;
+  color: inherit;
+}
+
+.cta-container {
+  flex-wrap: wrap; 
+  margin-top: 12px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.display-flex {
+  display: flex;
+}
+
+.cta-button {
+  flex: 1 0 auto;
+  padding: 8px 0;
+  border-top: 1px solid black;
+  color: black;
+  min-width: 50%;
+  box-sizing: border-box;
+  height: 60px;
+  background-color: transparent;
+}
+
+.cta-button-message {
+  width: 100%;
+  height: 100%;
+}
+
+button {
+  background: 0 0;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+
+
+
+        </style>
+    </head>
+
+    <body>
+        how to align better, learn more flexbox, the subtitle overflow???
+        <div class="container hidden">
+            <div class="hovercard hovercard-left active" role="tooltip" tabindex="-1" style="top:100px; left:12px">
+              <section class="info-container full-width display-flex">
+                <div class="picture-container">
+                  <a href="/in/emily-zhang-endcoded-url">
+                    <div class="picture display-flex">
+                      <div class="photo-circle"></div>
+                    </div>
+                  </a>
+                </div>
+                <div class="info">
+                  <h1 class="title-container">
+                    <a href="/in/emily-zhang-endcoded-url" class="entity-name">
+                      <strong>Yaobin Dong</strong>
+                    </a>
+                  </h1>
+                  <p class="subtitle">
+                      Software Developer, Web Developer, worked at OSISoft, LLC, Greater
+                      Philadelphia Area
+                  </p>
+                </div>
+              </section>
+              <section class="cta-container full-width display-flex">
+                <div class="cta-button">
+                  <button class="cta-button-message" aria-label="Send InMail to Allen Reyes">
+                    InMail
+                  </button>
+                </div>
+              </section>
+            </div>
+            
+          </div>
+    </body>
+</html>
