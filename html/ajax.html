@@ -39,7 +39,11 @@
 </head>
 
 <body>
-    <button onclick="fetch()">fetch</button>
+    <div class="button-wrap" id="wrap">
+        <button class="fetch-button">fetch</button>
+        <button class="fake-button">fake</button>
+    </div>
+    
     <p id="scrollCount">0</p>
     <p id="pageCount">0</p>
     <p id="content">loading...</p>
@@ -56,7 +60,12 @@
 
 
     <script  type="text/javascript">
-        var fetch = function() {
+
+
+
+    $(document).ready(function(){
+        //this is jquery event delegation
+        /*$(".button-wrap").on("click", ".fetch-button", function() {
             $.get("http://demo9043759.mockable.io/hello", function(response) {
             //$("#content").text(data.data.items[0].name);
             response.data.items.forEach(function(item) {
@@ -65,9 +74,22 @@
             });
             console.log(response);
             });
-        }
+        });*/
 
-        $(document).ready(function(){
+        //native js event delegation
+        document.getElementById("wrap").addEventListener("click", function(e) {
+            if (e.target && e.target.classList.contains("fetch-button")) {//the classList is a special array, no includes, but has contains
+                $.get("http://demo9043759.mockable.io/hello", function(response) {
+                //$("#content").text(data.data.items[0].name);
+                response.data.items.forEach(function(item) {
+                    $("#list").append(`<li>${item.name}</li>`);
+                    $("#list").append(`<li>${item.position}</li>`);
+                });
+                console.log(response);
+                });
+            }
+        });
+
         let page = 0;
         let scrollCount = 0
         // Check every 200ms the scroll position
@@ -150,8 +172,7 @@
                 }
             }
         })();
-
-        });
+    });//ready
     
     
     </script>
