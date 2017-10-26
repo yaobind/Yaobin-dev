@@ -140,7 +140,7 @@
                         var cache = {};
                         return function(content) {
                             if (!(content in cache)) {
-                                cache[content] =  $.get(`http://demo9043759.mockable.io/hello?content=${content}`).promise();
+                                cache[content] =  $.get(`http://demo9043759.mockable.io/hello`, {content: content}).promise();
                             }
 
                             return cache[content];
