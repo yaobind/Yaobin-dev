@@ -225,8 +225,11 @@ button {
                       detailPromise.done(function(response){
                         var cardName = response.data.cardName || "NO Name";
                         var cardPosition = response.data.cardPosition || "No Position";
-                        $(".info .entity-name").text(cardName);
-                        $(".info .subtitle").text(cardPosition);
+                        // $(".info .entity-name").text(cardName);
+                        // $(".info .subtitle").text(cardPosition);
+                        // which selector is faster?  .subtitle vs .info .subtitle
+                        $(".entity-name").text(cardName);
+                        $(".subtitle").text(cardPosition);
                         showUpdatedCard(targetPosition);
                       });
 
