@@ -1,0 +1,155 @@
+<html>
+    <head>
+
+          <script
+    src="https://code.jquery.com/jquery-3.2.1.js"
+    integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+    crossorigin="anonymous"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+
+
+        <style>
+            .nav-bar {
+                width: 100%;
+                position: relative;
+                height: 50px;
+                background-color: beige;
+                position: fixed;
+                top: 0;
+                left: 0;
+            }
+            
+            .flexbox {
+                 display: flex; 
+            }
+
+            .full-width {
+                box-sizing: border-box;
+                width: 100%;
+            }
+
+            .logo {
+                flex: 0 0 10%;
+                background-color: blue;
+            }
+
+            .search-form {
+                flex: 0 0 30%; 
+                border: 0;
+                margin: 0;
+                padding: 0;
+                background-color: grey;
+                display: static;
+            }
+
+            .hidden {
+                /*can display none still be the aria label???  */
+                display: none;
+            }
+
+            .search-input {
+                /* margin: 5px;  */
+                border: 3px black solid;
+                padding: 5;
+                width: 100%;
+                height: 100%;
+            }
+
+            .type-ahead-results {
+                display: absolute;
+                top: 50px;
+                padding: 0;
+                margin: 0;
+                border: 1px solid gray;
+                border-bottom: none;
+                list-style-type: none;
+            }
+
+
+            .type-ahead-item {
+                border-bottom: 1px solid gray;
+                cursor: pointer;
+            }
+
+            .type-ahead-item:hover {
+                background-color: yellow;
+            }
+
+        </style>
+    </head>
+
+    <body>
+      
+        <nav class="nav-bar flexbox full-width" role="banner" tabindex="-1">
+            <div class="logo"></div>
+            <!-- googel use action and onsubmit, linkedin does not use it, just for semantic -->
+            <form action="/search" role="search" class="search-form" onsubmit="return inputboxname.value!=''">
+                 <label for="search-input-id" class="hidden">Search</label> 
+                <input type="text" id="search-input-id" class="search-input" name="inputboxname" placeholder="search" 
+                    aria-autocomplete="list" aria-owns="suggest-results-id" aria-expanded="true" role="combobox">
+                 <!-- <ul tabindex="-1" role="listbox" id="suggest-results-id" class="type-ahead-results">
+                    <li class="type-ahead-item" role="option">Yaobin Dong</li>
+                    <li class="type-ahead-item" role="option">Tuo Wang</li>
+                    <li class="type-ahead-item" role="option">Xi Ling</li>
+                </ul>  -->
+            </form>
+        </nav>
+
+
+
+          <script  type="text/javascript">
+
+              $(document).ready(function() {
+                    $(".search-input").on("input", _.debounce(function(){
+                        cleanUpSuggestions();
+                        var content = $(this).val();
+                        if (!content) {
+                            return;
+                        }
+
+                        var suggestPromise = getCachedSuggestPromise(content);
+                        suggestPromise.done(function(response) {
+                            var results = response.data.items;
+                            if (results) {
+                                loadSuggestions(results);
+                            }
+                        });
+
+                    }, 300));
+
+                    $(".search-input").blur(function(){
+                        cleanUpSuggestions();
+                    });
+
+                    var cleanUpSuggestions = function() {
+                        $(".type-ahead-results").remove();
+                    };
+
+                    var loadSuggestions = function(results) {
+                        var ulelement = $(`<ul tabindex="-1" role="listbox" id="suggest-results-id" class="type-ahead-results">`);
+                        results.forEach(function(item) {
+                            ulelement.append($(`<li class="type-ahead-item" role="option">${item.name}</li>`));
+                        });
+
+                        $(".search-form").append(ulelement);
+                    };
+
+                    var getCachedSuggestPromise = (function() {
+                        var cache = {};
+                        return function(content) {
+                            if (!(content in cache)) {
+                                cache[content] =  $.get(`http://demo9043759.mockable.io/hello?content=${content}`).promise();
+                            }
+
+                            return cache[content];
+                        }
+                  })();
+
+              });
+
+
+
+          </script>
+    </body>
+</html>
