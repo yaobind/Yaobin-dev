@@ -121,21 +121,22 @@
                     $(".search-input").blur(function(){
                         cleanUpSuggestions();
                     });
+               });
 
-                    var cleanUpSuggestions = function() {
+                var cleanUpSuggestions = function() {
                         $(".type-ahead-results").remove();
-                    };
+                };
 
-                    var loadSuggestions = function(results) {
+                var loadSuggestions = function(results) {
                         var ulelement = $(`<ul tabindex="-1" role="listbox" id="suggest-results-id" class="type-ahead-results">`);
                         results.forEach(function(item) {
                             ulelement.append($(`<li class="type-ahead-item" role="option">${item.name}</li>`));
                         });
 
                         $(".search-form").append(ulelement);
-                    };
+                };
 
-                    var getCachedSuggestPromise = (function() {
+                var getCachedSuggestPromise = (function() {
                         var cache = {};
                         return function(content) {
                             if (!(content in cache)) {
@@ -144,10 +145,7 @@
 
                             return cache[content];
                         }
-                  })();
-
-              });
-
+                })();
 
 
           </script>
