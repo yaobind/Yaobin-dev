@@ -192,7 +192,7 @@ button {
                 <div class="info">
                   <h1 class="title-container">
                     <a href="/in/emily-zhang-endcoded-url" class="entity-name">
-                      <strong>Yaobin Dong</strong>
+                      Yaobin Dong
                     </a>
                   </h1>
                   <p class="subtitle">
@@ -216,24 +216,46 @@ button {
           <script  type="text/javascript">
 
               $(document).ready(function() {
+
+                //no need to detach: 1. at the end of the dom, 2, display: absolute does not change the geometry
                   $(".entity-list").on("mouseenter", ".entity", function(){
                       var entityName = $(this).text();//or html
-                      console.log(entityName);
+                      var detailPromise = getDetailsWithCache(entityName);
                       var targetPosition = $(this).offset();
-                      var tooltipWidth = $(".hovercard").width();
-                      var tooltipHeight = $(".hovercard").outerHeight(true);
-                      var updatedLeft = targetPosition.left - tooltipWidth;
-                      var updatedTop = targetPosition.top - tooltipHeight / 2;
-                      $(".container").removeClass("hidden");
-                      $(".hovercard").css("left", updatedLeft + 'px');
-                      $(".hovercard").css("top", updatedTop + 'px');
+                      detailPromise.done(function(response){
+                        var cardName = response.data.cardName || "NO Name";
+                        var cardPosition = response.data.cardPosition || "No Position";
+                        $(".info .entity-name").text(cardName);
+                        $(".info .subtitle").text(cardPosition);
+                        showUpdatedCard(targetPosition);
+                      });
+
                   });
 
                   $(".entity-list").on("mouseleave", ".entity", function(){
-                    console.log("out!!");
                       $(".container").addClass("hidden");
                   });
 
+                  var showUpdatedCard = function(targetPosition) {
+                        var tooltipWidth = $(".hovercard").width();
+                        var tooltipHeight = $(".hovercard").outerHeight(true);
+                        var updatedLeft = targetPosition.left - tooltipWidth;
+                        var updatedTop = targetPosition.top - tooltipHeight / 2;
+                        $(".container").removeClass("hidden");
+                        $(".hovercard").css("left", updatedLeft + 'px');
+                        $(".hovercard").css("top", updatedTop + 'px');
+                  }
+
+                  var getDetailsWithCache = (function() {
+                        var cache = {};
+                        return function(name) {
+                            if (!(name in cache)) {
+                                cache[name] =  $.get(`http://demo9043759.mockable.io/hello?name=${name}`).promise();
+                            }
+
+                            return cache[name];
+                        }
+                  })();
 
 
               });
