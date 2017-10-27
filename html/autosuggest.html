@@ -72,7 +72,7 @@
                 cursor: pointer;
             }
 
-            .type-ahead-item:hover {
+            .type-ahead-item:hover, .type-ahead-item.selected {
                 background-color: yellow;
             }
 
@@ -121,6 +121,43 @@
                     $(".search-input").blur(function(){
                         cleanUpSuggestions();
                     });
+
+                    $(".search-form").on("mousedown", "li", function(){//.type-ahead-results does not work since it was not on DOM when doc.ready
+                        console.log($(this).text() + " is clicked");
+                    });
+
+                    $(".search-input").on("keydown",  function(e){
+                        switch (e.which) {
+                            case 40://arrow down
+                                e.preventDefault();
+                                var selectedEl = $(".type-ahead-item.selected");
+                                if (selectedEl.length === 0) {
+                                    var list = $(".type-ahead-item");
+                                    if (list.length !== 0) {
+                                        list.first().addClass("selected");
+                                    }
+                                    return;
+                                }
+                                selectedEl.removeClass("selected");
+                                var nextEl = selectedEl.next();
+                                if (nextEl.length !== 0) {
+                                    nextEl.addClass("selected");
+                                }
+                                break;
+
+                            case 13://enter
+                                var selectedEl = $(".type-ahead-item.selected");
+                                if (selectedEl.length !== 0) {
+                                    e.preventDefault();
+                                    console.log(selectedEl.text() + " is Entered");
+                                }
+                                cleanUpSuggestions();
+                                break;
+                        }
+
+
+                    });
+
                });
 
                 var cleanUpSuggestions = function() {
@@ -130,7 +167,7 @@
                 var loadSuggestions = function(results) {
                         var ulelement = $(`<ul tabindex="-1" role="listbox" id="suggest-results-id" class="type-ahead-results">`);
                         results.forEach(function(item) {
-                            ulelement.append($(`<li class="type-ahead-item" role="option">${item.name}</li>`));
+                            ulelement.append($(`<li class="type-ahead-item" tabindex="-1" role="option">${item.name}</li>`));
                         });
 
                         $(".search-form").append(ulelement);

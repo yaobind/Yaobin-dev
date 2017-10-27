@@ -91,9 +91,9 @@
     
         <body>
             <section class="wrap">
-                <div id="calc-label">My Calculator</div>
-                <div class="calculator" aria-labelledby="calc-label">
-                    <section class="result" id="result-id" aria-label="result area">
+                <div id="calc-label" >My Calculator</div>
+                <div class="calculator" tabindex="0" aria-labelledby="calc-label">
+                    <section tabindex="0" class="result" id="result-id" aria-label="result area">
                         <p id="result-id" class="result-value">0</p>
                     </section>
                     <section class="buttons">
@@ -152,14 +152,10 @@
 
 
 
-                  class Stack {
+                class Stack {
                     constructor() {
                         this.stack = [];
-                        this[Symbol.iterator] = function *() {
-                        for (const el of this.stack) {
-                            yield el;
-                        }
-                        }
+
                     }
                     
                     isEmpty() {
@@ -172,20 +168,20 @@
 
                     pop() {
                         if (this.isEmpty()) {
-                        throw new Error('empty stack');
-                        } else {
-                        return this.stack.pop();
+                            throw new Error("stack is empty");
                         }
+
+                        return this.stack.pop();
                     }
 
-                    peek(n = -1) {
+                    peek() {
                         if (this.isEmpty()) {
-                        throw new Error('empty stack');
-                        } else {
-                        return this.stack[this.stack.length + n];
+                            throw new Error("stack is empty");
                         }
+                        
+                        return this.stack[this.stack.length - 1];
                     }
-                    }
+                }
     
               </script>
         </body>
