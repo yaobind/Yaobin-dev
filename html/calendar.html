@@ -79,11 +79,30 @@
 
 
           <script  type="text/javascript">
-            
+                var curtMon = new Date().getMonth() + 1;
+                var curtYear = new Date().getFullYear();
+                var MONTH = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jul", "Jun", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
               $(document).ready(function() {
+                  render();
+              });
+
+                var loadPrevMonth = function() {
+                    curtMon--;
+                    if (curtMon == 0) {
+                        curtYear--;
+                        curtMon = 12;
+                    }
+
+                    render();
+                }
+
+
+              var render = function() {
                  var daycount = 31;
                  var firstDay = 2;
-
+                $(".month").text(MONTH[curtMon]);
+                $(".year").text(curtYear);
 
                 var documentFragment = $(document.createDocumentFragment());
                 for (var i = 0; i < firstDay; i++) {
@@ -100,7 +119,16 @@
                 }
 
                 $(".current-month").append(documentFragment2);
-              });
+
+                $(".prev-arrow").click(function(){
+                    loadPrevMonth();
+                })
+
+                $(".next-arrow").click(function(){
+                    loadNextMonth();
+                })
+
+              }
 
           </script>
     </body>
