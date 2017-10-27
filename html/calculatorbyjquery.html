@@ -1,0 +1,193 @@
+<html>
+        <head>
+            <script
+                src="https://code.jquery.com/jquery-3.2.1.js"
+                integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+                crossorigin="anonymous">
+            </script>
+    
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    
+            <style>
+                .wrap {
+                    position: fixed;
+                    left: 20%;
+                    top: 20%;
+                    width: 40%;
+                    height: 40%;
+                }
+
+                #calc-label {
+                    text-align: center;
+                    width: 100%;
+                    background-color: beige;
+                }
+
+                .calculator {
+                    position: relative;
+                    width: 100%;
+                    height: 100%;
+                    border: 1px solid gray;
+                    background-color: lightcyan;
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .result {
+                    flex: 0 0 30%;
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    margin: 5px;
+                    border: 1px solid gray;
+                    background-color: white;
+                }
+
+                .result-value {
+                    flex: auto;
+                    text-align: right;
+                    font-size: 30px;
+                    padding-right: 10px; 
+                }
+
+                .buttons {
+                    flex: auto;
+                    display: flex;
+                }
+
+                .digits {
+                    flex: auto;
+                    display:flex;
+                    /* border: 1px solid gray; */
+                    /* margin: 5px; */
+                    flex-flow: row wrap;
+                    justify-content: space-between;
+                    align-items: space-between;
+                }
+
+                .digits button {
+                    flex: 1 1 30%;
+                    margin: 5px; 
+                }
+
+                .operators {
+                    flex: auto;
+                    display:flex;
+                    /* border: 1px solid gray; */
+                    /* margin: 5px; */
+                    flex-flow: column nowrap;
+                    justify-content: space-between;
+                }
+
+                .operators button {
+                    flex: auto;
+                    margin: 5px; 
+                }
+
+
+    
+            </style>
+        </head>
+    
+        <body>
+            <section class="wrap">
+                <div id="calc-label">My Calculator</div>
+                <div class="calculator" aria-labelledby="calc-label">
+                    <section class="result" id="result-id" aria-label="result area">
+                        <p id="result-id" class="result-value">0</p>
+                    </section>
+                    <section class="buttons">
+                            <div class="digits">
+                                <button>1</button>
+                                <button>2</button>
+                                <button>3</button>
+                                <button>4</button>
+                                <button>5</button>
+                                <button>6</button>
+                                <button>7</button>
+                                <button>8</button>
+                                <button>9</button>
+                                <button>0</button>
+                            </div>
+                            <div class="operators">
+                                <button>+</button>
+                                <button>-</button>
+                                <button>*</button>
+                                <button>/</button>
+                                <button>=</button>
+                            </div>
+                    </section>
+
+                </div>
+            </section>
+    
+    
+    
+              <script  type="text/javascript">
+    
+                  $(document).ready(function() {
+                        $(".buttons").on("click", "button", function(){
+                            var value = $(this).text();
+                            input(value);
+                            render();
+                        });
+                  });
+
+                  var display = 0;
+                  var input = function(value) {
+                        // if(['+', '-', '*', '/', '='].includes(value)) {
+
+                        // } else {
+                        //     var digit = parseInt(value);
+
+                        // }
+                        
+                        display = 2134234;
+
+                  }
+
+                  var render = function() {
+                    $(".result-value").text(display);
+                  }
+
+
+
+                  class Stack {
+                    constructor() {
+                        this.stack = [];
+                        this[Symbol.iterator] = function *() {
+                        for (const el of this.stack) {
+                            yield el;
+                        }
+                        }
+                    }
+                    
+                    isEmpty() {
+                        return this.stack.length === 0;
+                    }
+
+                    push(val) {
+                        this.stack.push(val);
+                    }
+
+                    pop() {
+                        if (this.isEmpty()) {
+                        throw new Error('empty stack');
+                        } else {
+                        return this.stack.pop();
+                        }
+                    }
+
+                    peek(n = -1) {
+                        if (this.isEmpty()) {
+                        throw new Error('empty stack');
+                        } else {
+                        return this.stack[this.stack.length + n];
+                        }
+                    }
+                    }
+    
+              </script>
+        </body>
+    </html>
+    
