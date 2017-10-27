@@ -117,7 +117,7 @@
           stack.push(parseInt(char));
         }
         display = stack.peek();
-      } else if (char !== '=') {
+      } else if (char !== '=') {//+-*/
         shouldResetIfNumber = false;
         if (isNum(stack.peek())) {
           stack.push(char);
@@ -126,7 +126,7 @@
           stack.push(char);
         }
         display = evaluate(stack);
-      } else {
+      } else {// =
         const res = evaluate(stack, true);
         while (!stack.isEmpty()) {
           stack.pop();
