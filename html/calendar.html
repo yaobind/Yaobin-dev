@@ -43,6 +43,9 @@
             button {
                 flex: 0 1 calc(100%/7);
             }
+            .today {
+                background: lightskyblue;
+            }
 
             .hidden {
                 visibility: hidden;
@@ -79,17 +82,25 @@
 
 
           <script  type="text/javascript">
-                var curtMon = new Date().getMonth() + 1;
+                var curtMon = new Date().getMonth(); //getMonth() is 0 based
                 var curtYear = new Date().getFullYear();
-                var MONTH = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jul", "Jun", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                var MONTH = ["Jan", "Feb", "Mar", "Apr", "May", "Jul", "Jun", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
               $(document).ready(function() {
                   render();
+
+                  $(".prev-arrow").click(function(){
+                    loadPrevMonth();
+                  })
+
+                    $(".next-arrow").click(function(){
+                        loadNextMonth();
+                    })
               });
 
                 var loadPrevMonth = function() {
                     curtMon--;
-                    if (curtMon == 0) {
+                    if (curtMon < 0) {
                         curtYear--;
                         curtMon = 12;
                     }
@@ -97,10 +108,24 @@
                     render();
                 }
 
+                var loadNextMonth = function() {
+                    curtMon++;
+                    if (curtMon === 12) {
+                        curtYear++;
+                        curtMon = 0;
+                    }
+
+                    render();
+                }
+
 
               var render = function() {
-                 var daycount = 31;
-                 var firstDay = 2;
+                 var daycount = new Date(curtYear, curtMon + 1, 0).getDate();;
+                 var firstDay = new Date(curtYear, curtMon, 1).getDay();
+                 var today = new Date();
+                 var todayDate = today.getDate();
+                 var todayMonth = today.getMonth();
+                 var todayYear = today.getFullYear();
                 $(".month").text(MONTH[curtMon]);
                 $(".year").text(curtYear);
 
@@ -110,24 +135,21 @@
                     documentFragment.append(button);
                 }
 
-                $(".current-month").append(documentFragment);
-
-                var documentFragment2 = $(document.createDocumentFragment());
                 for (var i = 1; i <= daycount; i++) {
                     var button = $('<button>' + i + '</button>');
-                    documentFragment2.append(button);
+                    if (todayYear === curtYear && todayMonth === curtMon && todayDate === i) {
+                        button.addClass("today");
+                    }
+                    documentFragment.append(button);
                 }
 
-                $(".current-month").append(documentFragment2);
-
-                $(".prev-arrow").click(function(){
-                    loadPrevMonth();
-                })
-
-                $(".next-arrow").click(function(){
-                    loadNextMonth();
-                })
-
+                var curtMonthEl = $(".current-month");
+                var parent = curtMonthEl.parent();
+                curtMonthEl.detach();
+                curtMonthEl.empty();//this will cause reflow,  adding additional div wrap to detach VS append to last position
+                curtMonthEl.append(documentFragment);
+                //curtMonthEl.appendTo(parent);
+                curtMonthEl.insertAfter($(".labels"));
               }
 
           </script>

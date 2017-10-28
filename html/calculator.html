@@ -113,7 +113,7 @@
         } else if (isNum(stack.peek())) {
           const n = stack.pop();
           stack.push(n * 10 + parseInt(char));
-        } else {
+        } else {//+-*
           stack.push(parseInt(char));
         }
         display = stack.peek();
@@ -127,6 +127,10 @@
         }
         display = evaluate(stack);
       } else {// =
+        //remove the trailing operators
+        while (!stack.isEmpty() && !isNum(stack.peek())) {
+          stack.pop();
+        }
         const res = evaluate(stack, true);
         while (!stack.isEmpty()) {
           stack.pop();
