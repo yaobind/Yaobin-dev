@@ -61,12 +61,11 @@
                     /* border: 1px solid gray; */
                     /* margin: 5px; */
                     flex-flow: row wrap;
-                    justify-content: space-between;
-                    align-items: space-between;
+                    justify-content: center;
                 }
 
                 .digits button {
-                    flex: 1 1 30%;
+                    flex: 0 1 30%;
                     margin: 5px; 
                 }
 
@@ -124,8 +123,15 @@
     
     
               <script  type="text/javascript">
-    
+                  var display;
+                  var stack;
+                  var shouldResetIfNumber;
                   $(document).ready(function() {
+                        display = 0;
+                        stack = new Stack();
+                        stack.push(0);
+                        shouldResetIfNumber = false;
+
                         $(".buttons").on("click", "button", function(){
                             var value = $(this).text();
                             input(value);
@@ -133,24 +139,9 @@
                         });
                   });
 
-                  var display = 0;
-                  var input = function(value) {
-                        // if(['+', '-', '*', '/', '='].includes(value)) {
-
-                        // } else {
-                        //     var digit = parseInt(value);
-
-                        // }
-                        
-                        display = 2134234;
-
-                  }
-
                   var render = function() {
                     $(".result-value").text(display);
                   }
-
-
 
                 class Stack {
                     constructor() {
@@ -182,7 +173,87 @@
                         return this.stack[this.stack.length - 1];
                     }
                 }
+
+                function input(char) {
+                    if (isNum(char)) {
+                        if (shouldResetIfNumber) {
+                        stack.pop();
+                        stack.push(parseInt(char));
+                        shouldResetIfNumber = false;
+                        } else if (isNum(stack.peek())) {//continousely input number
+                        const n = stack.pop();
+                        stack.push(n * 10 + parseInt(char));
+                        } else {//new number, last input is operator
+                        stack.push(parseInt(char));
+                        }
+
+                        display = stack.peek();
+
+                    } else if (char !== '=') {//+-*/
+                        shouldResetIfNumber = false;
+                        display = reduce(stack);//should remove the tail operator;
+                        stack.push(char);
+
+                    } else {// =
+                        display = reduce(stack);
+                        shouldResetIfNumber = true;
+                    }
+                }
+
+                function reduce(stack) {//remove trailing operator, reduce stack to single result
+                    //cases: 0  |  0 +  |  0 + 1 | 
+                    if (stack.isEmpty()) {
+                        throw new Error("empty stack in reduce function");
+                    }
+                    
+                    if (!isNum(stack.peek())) {
+                        stack.pop();
+                    }
+
+                    const values = new Stack();
+                    const operators = new Stack();
+                    while (!stack.isEmpty()) {
+                        values.push(stack.pop());
+                        if (!stack.isEmpty()) {
+                        operators.push(stack.pop());
+                        }
+                    }
+
+                    //stack always start with number and should at least has 1 number, cannot start with operator
+                    var result = values.pop();
+                    if (!values.isEmpty()) {
+                        var second = values.pop();
+                        var operator = operators.pop();
+                        result = calculate(result, second, operator);
+                    }
+
+                    stack.push(result);
+                    return result;
+                }
+
+                function calculate(first, second, operator) {
+                    var res = 0;
+                    switch(operator) {
+                        case "+":
+                        res = first + second;
+                        break;
+                        case "-":
+                        res = first - second;
+                        break;
+                        case "*":
+                        res = first * second;
+                        break;
+                        case "/": 
+                        res = first / second;
+                        break;
+                    }
+
+                    return res;
+                }
     
+                function isNum(val) {
+                        return !["+", "-", "*", "/", "="].includes(val);
+                }
               </script>
         </body>
     </html>

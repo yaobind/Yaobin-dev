@@ -59,11 +59,6 @@
     class Stack {
       constructor() {
         this.stack = [];
-        this[Symbol.iterator] = function *() {
-          for (const el of this.stack) {
-            yield el;
-          }
-        }
       }
       
       isEmpty() {
@@ -82,11 +77,11 @@
         }
       }
 
-      peek(n = -1) {
+      peek() {
         if (this.isEmpty()) {
           throw new Error('empty stack');
         } else {
-          return this.stack[this.stack.length + n];
+          return this.stack[this.stack.length - 1];
         }
       }
     }
@@ -110,88 +105,75 @@
           stack.pop();
           stack.push(parseInt(char));
           shouldResetIfNumber = false;
-        } else if (isNum(stack.peek())) {
+        } else if (isNum(stack.peek())) {//continousely input number
           const n = stack.pop();
           stack.push(n * 10 + parseInt(char));
-        } else {//+-*
+        } else {//new number, last input is operator
           stack.push(parseInt(char));
         }
+
         display = stack.peek();
+
       } else if (char !== '=') {//+-*/
         shouldResetIfNumber = false;
-        if (isNum(stack.peek())) {
-          stack.push(char);
-        } else {
-          stack.pop();
-          stack.push(char);
-        }
-        display = evaluate(stack);
+        display = reduce(stack);//should remove the tail operator;
+        stack.push(char);
+
       } else {// =
-        //remove the trailing operators
-        while (!stack.isEmpty() && !isNum(stack.peek())) {
-          stack.pop();
-        }
-        const res = evaluate(stack, true);
-        while (!stack.isEmpty()) {
-          stack.pop();
-        }
-        stack.push(res);
+        display = reduce(stack);
         shouldResetIfNumber = true;
-        display = res;
       }
     }
 
-    function evaluate(stack, isComplete = false) {
+    function reduce(stack) {
+      //cases: 0  |  0 +  |  0 + 1 | 
+      if (stack.isEmpty()) {
+        return;
+      }
+      
+      if (!isNum(stack.peek())) {
+        stack.pop();
+      }
+
       const values = new Stack();
       const operators = new Stack();
-      for (const val of stack) {
-        if (isNum(val)) {
-          values.push(val);
-        } else {
-          if (val === '+' || val === '-') {
-            while (!operators.isEmpty()) {
-              values.push(operators.pop());
-            }
-            operators.push(val);
-          } else {
-            while (!operators.isEmpty() && (operators.peek() === '*' || operators.peek() === '/')) {
-              values.push(operators.pop());
-            }
-            operators.push(val);
-          }
+      while (!stack.isEmpty()) {
+        values.push(stack.pop());
+        if (!stack.isEmpty()) {
+          operators.push(stack.pop());
         }
       }
 
-      if (isComplete) {
-        while (!operators.isEmpty()) {
-          values.push(operators.pop());
-        }
+      //stack always start with number and should at least has 1 number, cannot start with operator
+      var result = values.pop();
+      if (!values.isEmpty()) {
+        var second = values.pop();
+        var operator = operators.pop();
+        result = calculate(result, second, operator);
       }
 
-      const rpn = new Stack();
-      for (const val of values) {
-        if (isNum(val)) {
-          rpn.push(val);
-        } else {
-          const b = rpn.pop();
-          const a = rpn.pop();
-          switch (val) {
-            case '+':
-              rpn.push(a + b);
-              break;
-            case '-':
-              rpn.push(a - b);
-              break;
-            case '/':
-              rpn.push(a / b);
-              break;
-            case '*':
-              rpn.push(a * b);
-              break;
-          }
-        }
+      stack.push(result);
+      return result;
+    }
+
+    function calculate(first, second, operator) {
+      var res = 0;
+      switch(operator) {
+        case "+":
+          res = first + second;
+          break;
+        case "-":
+          res = first - second;
+          break;
+        case "*":
+          res = first * second;
+          break;
+        case "/": 
+          res = first / second;
+          break;
       }
-      return rpn.pop();
+
+      return res;
     }
 
     function render() {
@@ -199,13 +181,14 @@
     }
 
     function isNum(val) {
-      if (typeof val === 'number') {
-        return true;
-      } else if (typeof val === 'string') {
-        return !Number.isNaN(parseInt(val));
-      } else {
-        return false;
-      }
+      return !["+", "-", "*", "/", "="].includes(val);
+      // if (typeof val === 'number') {
+      //   return true;
+      // } else if (typeof val === 'string') {
+      //   return !Number.isNaN(parseInt(val));
+      // } else {
+      //   return false;
+      // }
     }
   </script>
 </body>
