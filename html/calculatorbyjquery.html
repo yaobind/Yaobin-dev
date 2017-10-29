@@ -14,7 +14,7 @@
                     left: 20%;
                     top: 20%;
                     width: 40%;
-                    height: 40%;
+                    height: 50%;
                 }
 
                 #calc-label {
@@ -56,21 +56,24 @@
                 }
 
                 .digits {
-                    flex: auto;
+                    flex: 0 0 70%;
+                    /* box-sizing: border-box; */
                     display:flex;
                     /* border: 1px solid gray; */
                     /* margin: 5px; */
                     flex-flow: row wrap;
                     justify-content: center;
+                    position: relative;
                 }
 
                 .digits button {
-                    flex: 0 1 30%;
-                    margin: 5px; 
+                    flex: 0 0 30%;
+                    /* padding: 5px; */
+                    /* box-sizing: border-box;  */
                 }
 
                 .operators {
-                    flex: auto;
+                    flex: 0 0 10%;
                     display:flex;
                     /* border: 1px solid gray; */
                     /* margin: 5px; */
@@ -78,13 +81,14 @@
                     justify-content: space-between;
                 }
 
-                .operators button {
+                .operators button, .undo button {
                     flex: auto;
-                    margin: 5px; 
+                    /* margin: 5px;  */
                 }
 
-
-    
+                .undo {
+                    flex: auto;
+                }
             </style>
         </head>
     
@@ -116,6 +120,12 @@
                                 <button>=</button>
                             </div>
                     </section>
+                    <section>
+                            <div class="undo">
+                                    <button id="undo-button">undo</button>
+                                    <button id="redo-button">redo</button>
+                            </div>
+                    </section>
 
                 </div>
             </section>
@@ -126,16 +136,32 @@
                   var display;
                   var stack;
                   var shouldResetIfNumber;
+                  var undoStack, redoStack;
                   $(document).ready(function() {
                         display = 0;
                         stack = new Stack();
                         stack.push(0);
                         shouldResetIfNumber = false;
 
+                        undoStack = new Stack();
+                        undoStack.push(0);
+                        redoStack = new Stack();
+
+                        $(".undo button").prop("disabled", true);
+
                         $(".buttons").on("click", "button", function(){
                             var value = $(this).text();
                             input(value);
                             render();
+                        });
+
+                        $(".undo").on("click", "button", function(){
+                            var el = $(this);
+                            if (el.text() === "undo") {
+                                undo();
+                            } else {
+                                redo();
+                            }
                         });
                   });
 
@@ -172,6 +198,36 @@
                         
                         return this.stack[this.stack.length - 1];
                     }
+
+                    size()  {
+                        return this.stack.length;
+                    }
+                }
+
+                function undo() {//how to use this on any data
+                    redoStack.push(undoStack.pop());
+                    display = undoStack.peek();
+                    $("#redo-button").prop("disabled", false);
+                    if (undoStack.size() < 2) {
+                        $("#undo-button").prop("disabled", true);
+                    }
+                    render();
+
+                    clearStack(stack);
+                    stack.push(display);
+                }
+
+                function redo() {
+                    display = redoStack.pop();
+                    undoStack.push(display);
+                    $("#undo-button").prop("disabled", false);
+                    if (redoStack.isEmpty()) {
+                        $("#redo-button").prop("disabled", true);
+                    }
+                    render();
+
+                    clearStack(stack);
+                    stack.push(display);
                 }
 
                 function input(char) {
@@ -197,25 +253,37 @@
                     } else {// =
                         display = reduce(stack);
                         shouldResetIfNumber = true;
+
+                        //undo/redo logic: save display to undostack only when = pressed, need clear redostack
+                        undoStack.push(display);
+                        $("#undo-button").prop("disabled",false);
+                        clearStack(redoStack);
+                        $("#redo-button").prop("disabled",true);
                     }
                 }
 
-                function reduce(stack) {//remove trailing operator, reduce stack to single result
+                function clearStack(stak) {
+                    while (!stak.isEmpty()) {
+                        stak.pop();
+                    }
+                }
+
+                function reduce(stak) {//remove trailing operator, reduce stack to single result
                     //cases: 0  |  0 +  |  0 + 1 | 
-                    if (stack.isEmpty()) {
+                    if (stak.isEmpty()) {
                         throw new Error("empty stack in reduce function");
                     }
                     
-                    if (!isNum(stack.peek())) {
-                        stack.pop();
+                    if (!isNum(stak.peek())) {
+                        stak.pop();
                     }
 
                     const values = new Stack();
                     const operators = new Stack();
-                    while (!stack.isEmpty()) {
-                        values.push(stack.pop());
-                        if (!stack.isEmpty()) {
-                        operators.push(stack.pop());
+                    while (!stak.isEmpty()) {
+                        values.push(stak.pop());
+                        if (!stak.isEmpty()) {
+                        operators.push(stak.pop());
                         }
                     }
 
@@ -227,7 +295,7 @@
                         result = calculate(result, second, operator);
                     }
 
-                    stack.push(result);
+                    stak.push(result);
                     return result;
                 }
 
