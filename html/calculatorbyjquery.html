@@ -133,19 +133,17 @@
     
     
               <script  type="text/javascript">
-                  var display;
+                  var display_obj;
                   var stack;
                   var shouldResetIfNumber;
-                  var undoStack, redoStack;
+                  var state_hist;
                   $(document).ready(function() {
-                        display = 0;
+                        display_obj = {display_val: 0};
                         stack = new Stack();
                         stack.push(0);
                         shouldResetIfNumber = false;
 
-                        undoStack = new Stack();
-                        undoStack.push(0);
-                        redoStack = new Stack();
+                        state_hist = new Hist(display_obj);
 
                         $(".undo button").prop("disabled", true);
 
@@ -166,13 +164,46 @@
                   });
 
                   var render = function() {
-                    $(".result-value").text(display);
+                    $(".result-value").text(display_obj.display_val);
+                  }
+
+                  class Hist {
+                      constructor(init_state = {}) {
+                          this.prev = new Stack();
+                          this.curt = _.cloneDeep(init_state);
+                          this.future = new Stack();
+                      }
+
+                      save(state) {
+                        this.prev.push(this.curt);
+                        this.curt = _.cloneDeep(state);
+                        this.future = new Stack();
+                      }
+
+                      undo() {
+                        this.future.push(this.curt);
+                        this.curt = this.prev.pop();
+                        return _.cloneDeep(this.curt);//must be deepcopy
+                      }
+
+                      redo() {
+                        this.prev.push(this.curt);
+                        this.curt = this.future.pop();
+                        return _.cloneDeep(this.curt);//must be deepcopy
+                      }
+
+                      canRedo() {
+                        return !this.future.isEmpty();
+                      }
+
+                      canUndo() {
+                        return !this.prev.isEmpty();
+                      }
                   }
 
                 class Stack {
                     constructor() {
                         this.stack = [];
-
                     }
                     
                     isEmpty() {
@@ -205,29 +236,41 @@
                 }
 
                 function undo() {//how to use this on any data
-                    redoStack.push(undoStack.pop());
-                    display = undoStack.peek();
-                    $("#redo-button").prop("disabled", false);
-                    if (undoStack.size() < 2) {
-                        $("#undo-button").prop("disabled", true);
-                    }
+                    display_obj = state_hist.undo();
+                    updateButton();
                     render();
 
                     clearStack(stack);
-                    stack.push(display);
+                    stack.push(display_obj.display_val);
                 }
 
                 function redo() {
-                    display = redoStack.pop();
-                    undoStack.push(display);
-                    $("#undo-button").prop("disabled", false);
-                    if (redoStack.isEmpty()) {
-                        $("#redo-button").prop("disabled", true);
-                    }
+                    display_obj = state_hist.redo();
+                    updateButton();
                     render();
 
                     clearStack(stack);
-                    stack.push(display);
+                    stack.push(display_obj.display_val);
+                }
+
+                function save() {
+                        //undo/redo logic: save display to undostack only when = pressed, need clear redostack
+                        state_hist.save(display_obj);
+                        updateButton();
+                }
+
+                function updateButton() {
+                    if (state_hist.canRedo()) {
+                        $("#redo-button").prop("disabled", false);
+                    } else {
+                        $("#redo-button").prop("disabled", true);
+                    }
+
+                    if (state_hist.canUndo()) {
+                        $("#undo-button").prop("disabled", false);
+                    } else {
+                        $("#undo-button").prop("disabled", true);
+                    }
                 }
 
                 function input(char) {
@@ -243,22 +286,18 @@
                         stack.push(parseInt(char));
                         }
 
-                        display = stack.peek();
+                        display_obj.display_val = stack.peek();
 
                     } else if (char !== '=') {//+-*/
                         shouldResetIfNumber = false;
-                        display = reduce(stack);//should remove the tail operator;
+                        display_obj.display_val = reduce(stack);//should remove the tail operator;
                         stack.push(char);
 
                     } else {// =
-                        display = reduce(stack);
+                        display_obj.display_val = reduce(stack);
                         shouldResetIfNumber = true;
 
-                        //undo/redo logic: save display to undostack only when = pressed, need clear redostack
-                        undoStack.push(display);
-                        $("#undo-button").prop("disabled",false);
-                        clearStack(redoStack);
-                        $("#redo-button").prop("disabled",true);
+                        save();
                     }
                 }
 
