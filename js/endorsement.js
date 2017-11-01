@@ -19,6 +19,7 @@ function groupBySkill(arr) {
         skillMap[e.skill].push(e.user);
     });
 
+    //for (const sk in map) {}
     Object.keys(skillMap).forEach(function(e) {
         result.push({skill: e, user: skillMap[e], count: skillMap[e].length});
     })
@@ -27,6 +28,5 @@ function groupBySkill(arr) {
 
     return result;
 }
-
 
 console.log(groupBySkill(endorsements));

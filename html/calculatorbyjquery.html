@@ -174,22 +174,27 @@
                           this.future = new Stack();
                       }
 
-                      save(state) {
+                      save(state, callback) {
                         this.prev.push(this.curt);
                         this.curt = _.cloneDeep(state);
                         this.future = new Stack();
+                        callback();
                       }
 
-                      undo() {
+                      undo(callback) {
                         this.future.push(this.curt);
                         this.curt = this.prev.pop();
-                        return _.cloneDeep(this.curt);//must be deepcopy
+                        var stateToReturn = _.cloneDeep(this.curt);//must be deepcopy
+                        callback(stateToReturn);
+                        //return stateToReturn;
                       }
 
-                      redo() {
+                      redo(callback) {
                         this.prev.push(this.curt);
                         this.curt = this.future.pop();
-                        return _.cloneDeep(this.curt);//must be deepcopy
+                        var stateToReturn = _.cloneDeep(this.curt);//must be deepcopy
+                        callback(stateToReturn);
+                        //return stateToReturn;
                       }
 
                       canRedo() {
@@ -236,27 +241,44 @@
                 }
 
                 function undo() {//how to use this on any data
-                    display_obj = state_hist.undo();
-                    updateButton();
-                    render();
+                    // display_obj = state_hist.undo();
+                    // updateButton();
+                    // render();
 
-                    clearStack(stack);
-                    stack.push(display_obj.display_val);
+                    // clearStack(stack);
+                    // stack.push(display_obj.display_val);
+                    state_hist.undo(function(obj){
+                        display_obj = obj;
+                        updateButton();
+                        render();
+
+                        clearStack(stack);
+                        stack.push(display_obj.display_val);
+                    });
                 }
 
                 function redo() {
-                    display_obj = state_hist.redo();
-                    updateButton();
-                    render();
+                    // display_obj = state_hist.redo();
+                    // updateButton();
+                    // render();
 
-                    clearStack(stack);
-                    stack.push(display_obj.display_val);
+                    // clearStack(stack);
+                    // stack.push(display_obj.display_val);
+                    state_hist.redo(function(obj){
+                        display_obj = obj;
+                        updateButton();
+                        render();
+
+                        clearStack(stack);
+                        stack.push(display_obj.display_val);
+                    });
                 }
 
                 function save() {
                         //undo/redo logic: save display to undostack only when = pressed, need clear redostack
-                        state_hist.save(display_obj);
-                        updateButton();
+                        state_hist.save(display_obj, function() {
+                            updateButton();
+                        });
                 }
 
                 function updateButton() {
