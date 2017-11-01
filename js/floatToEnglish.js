@@ -4,7 +4,7 @@ var TenPlus = ["Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Si
 var unitStr = ["Billion", "Million", "Thousand"];
 var unit = [1e9, 1e6, 1000];//use scientific notition
 var numberToWords = function(num) {
-    //ask for clarification null undefined 
+    //ask for clarification null undefined typeof num === "number"
     if (num === 0) {
         return "Zero";
     }
@@ -24,7 +24,7 @@ var numberToWords = function(num) {
         
         under1000(Math.floor(num / unitVal), result);
         result.push(unitStr[index]);
-        num %= unit[index];
+        num %= unitVal;
     });
 
     if (num > 0) {
@@ -40,7 +40,7 @@ var numberToWords = function(num) {
 
 function under1000(num, result) {
     if (num >= 100) {//!!! 
-        result.push(singles[Math.floor(num / 100)]);
+        result.push(singles[Math.floor(num / 100)]);//!!!!
         result.push("Hundred");
         num %= 100;
     }
