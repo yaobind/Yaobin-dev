@@ -15,27 +15,34 @@
                     top: 20%;
                     width: 40%;
                     height: 50%;
+                    overflow: hidden;
                 }
 
                 #calc-label {
                     text-align: center;
                     width: 100%;
+                    height: 10%; 
+                    overflow: hidden;
                     background-color: beige;
+                }
+
+                .flexbox {
+                    display: flex;
                 }
 
                 .calculator {
                     position: relative;
                     width: 100%;
-                    height: 100%;
+                    height: 90%;
                     border: 1px solid gray;
                     background-color: lightcyan;
-                    display: flex;
                     flex-direction: column;
+                    overflow: hidden;
                 }
 
                 .result {
-                    flex: 0 0 30%;
-                    display: flex;
+                    height: 20%;
+                    /* display: flex; */
                     flex-direction: column;
                     justify-content: center;
                     margin: 5px;
@@ -45,20 +52,24 @@
 
                 .result-value {
                     flex: auto;
+                    /* !!! */
                     text-align: right;
                     font-size: 30px;
                     padding-right: 10px; 
                 }
 
                 .buttons {
-                    flex: auto;
-                    display: flex;
+                    height: 70%;
+                    width: 100%;
+                    /* display: flex; */
+                    /*!!!!!  */
+                    justify-content: space-around;
                 }
 
                 .digits {
                     flex: 0 0 70%;
                     /* box-sizing: border-box; */
-                    display:flex;
+                    /* display:flex; */
                     /* border: 1px solid gray; */
                     /* margin: 5px; */
                     flex-flow: row wrap;
@@ -74,7 +85,7 @@
 
                 .operators {
                     flex: 0 0 10%;
-                    display:flex;
+                    /* display:flex; */
                     /* border: 1px solid gray; */
                     /* margin: 5px; */
                     flex-flow: column nowrap;
@@ -82,12 +93,17 @@
                 }
 
                 .operators button, .undo button {
-                    flex: auto;
+                     flex: 0 0 10%; 
+                     width: 50px;
                     /* margin: 5px;  */
                 }
 
                 .undo {
                     flex: auto;
+                }
+
+                * {
+                    box-sizing: border-box;
                 }
             </style>
         </head>
@@ -96,11 +112,11 @@
             <section class="wrap">
                 <div id="calc-label" >My Calculator</div>
                 <div class="calculator" tabindex="0" aria-labelledby="calc-label">
-                    <section tabindex="0" class="result" id="result-id" aria-label="result area">
+                    <section tabindex="0" class="result flexbox" id="result-id" aria-label="result area">
                         <p id="result-id" class="result-value">0</p>
                     </section>
-                    <section class="buttons">
-                            <div class="digits">
+                    <section class="buttons flexbox">
+                            <div class="digits flexbox">
                                 <button>1</button>
                                 <button>2</button>
                                 <button>3</button>
@@ -112,7 +128,7 @@
                                 <button>9</button>
                                 <button>0</button>
                             </div>
-                            <div class="operators">
+                            <div class="operators flexbox">
                                 <button>+</button>
                                 <button>-</button>
                                 <button>*</button>
@@ -142,10 +158,8 @@
                         stack = new Stack();
                         stack.push(0);
                         shouldResetIfNumber = false;
-
                         state_hist = new Hist(display_obj);
-
-                        $(".undo button").prop("disabled", true);
+                        updateButton();
 
                         $(".buttons").on("click", "button", function(){
                             var value = $(this).text();
@@ -241,12 +255,6 @@
                 }
 
                 function undo() {//how to use this on any data
-                    // display_obj = state_hist.undo();
-                    // updateButton();
-                    // render();
-
-                    // clearStack(stack);
-                    // stack.push(display_obj.display_val);
                     state_hist.undo(function(obj){
                         display_obj = obj;
                         updateButton();
@@ -258,12 +266,6 @@
                 }
 
                 function redo() {
-                    // display_obj = state_hist.redo();
-                    // updateButton();
-                    // render();
-
-                    // clearStack(stack);
-                    // stack.push(display_obj.display_val);
                     state_hist.redo(function(obj){
                         display_obj = obj;
                         updateButton();
@@ -275,7 +277,6 @@
                 }
 
                 function save() {
-                        //undo/redo logic: save display to undostack only when = pressed, need clear redostack
                         state_hist.save(display_obj, function() {
                             updateButton();
                         });
