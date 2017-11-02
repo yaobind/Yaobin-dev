@@ -57,10 +57,10 @@
 
         <section class="calendar-wrap">
             <section class="month-change">
-                <button class="prev-arrow"><</button>
+                <button class="prev-arrow">&lt</button>
                 <h1 class="month">October</h1>
                 <h1 class="year">2017</h1>
-                <button class="next-arrow">></button>
+                <button class="next-arrow">&gt</button>
             </section>
             <section>
                 <div class="labels">
@@ -84,21 +84,21 @@
           <script  type="text/javascript">
                 var curtMon = new Date().getMonth(); //getMonth() is 0 based
                 var curtYear = new Date().getFullYear();
-                var MONTH = ["Jan", "Feb", "Mar", "Apr", "May", "Jul", "Jun", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const MONTH = ["Jan", "Feb", "Mar", "Apr", "May", "Jul", "Jun", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
               $(document).ready(function() {
-                  render();
+                    render();
 
-                  $(".prev-arrow").click(function(){
-                    loadPrevMonth();
-                  })
+                    $(".prev-arrow").click(function(){
+                        loadPrevMonth();
+                    })
 
                     $(".next-arrow").click(function(){
                         loadNextMonth();
                     })
               });
 
-                var loadPrevMonth = function() {
+                const loadPrevMonth = function() {
                     curtMon--;
                     if (curtMon < 0) {
                         curtYear--;
@@ -108,7 +108,7 @@
                     render();
                 }
 
-                var loadNextMonth = function() {
+                const loadNextMonth = function() {
                     curtMon++;
                     if (curtMon === 12) {
                         curtYear++;
@@ -119,13 +119,13 @@
                 }
 
 
-              var render = function() {
-                 var daycount = new Date(curtYear, curtMon + 1, 0).getDate();;
-                 var firstDay = new Date(curtYear, curtMon, 1).getDay();
-                 var today = new Date();
-                 var todayDate = today.getDate();
-                 var todayMonth = today.getMonth();
-                 var todayYear = today.getFullYear();
+              const render = function() {
+                 const daycount = new Date(curtYear, curtMon + 1, 0).getDate();
+                 const firstDay = new Date(curtYear, curtMon, 1).getDay();
+                 const today = new Date();
+                 const todayDate = today.getDate();
+                 const todayMonth = today.getMonth();
+                 const todayYear = today.getFullYear();
                 $(".month").text(MONTH[curtMon]);
                 $(".year").text(curtYear);
 
