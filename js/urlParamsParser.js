@@ -23,7 +23,7 @@ var parseQueryString = function( url ) {
         return params;
     }    
     
-    var queryString;
+    var queryString = '';
     if (url.includes('#')) {
         queryString = url.substring( url.indexOf('?') + 1, url.indexOf('#'));
     } else {
