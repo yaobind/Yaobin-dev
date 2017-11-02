@@ -1,52 +1,15 @@
-<div id="slider"></div>
-<div id="showval">0</div>
+<html>
+    <head>
+        <script
+            src="https://code.jquery.com/jquery-3.2.1.js"
+            integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+            crossorigin="anonymous">
+        </script>
 
-//js
-var conf = [
-    {val: 0, label: 'cold'}, 
-    {val: 375, label: 'medium'}, 
-    {val: 500, label:'hot'}
-  ];
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
 
-$.fn.sliderit = function(config) {
-  var labels = config;
-  var min = labels[0].val;
-  var max = labels[labels.length - 1].val;
-
-	var container = $(this);
-
-
-//better to avoid selector
-  //$(".slider").attr('max', max);
-  //$(".slider").attr('min', min);
-  //$(".slider").attr('value', min); 
-  var slider = $(`<input type="range" max="${max}" min="${min}" value="${min}" class="slider">`);
-    
-    //attach eventlistener before append, avoid selector 
-  slider.on('input', function() {
-  	 var value = this.value;
-     this.value = labels.reduce(function(prev,curt) {
-        var prevDiff = Math.abs(prev.val - value);
-        var curtDiff = Math.abs(curt.val - value);
-        return prevDiff <= curtDiff ? prev : curt;
-     }).val;   
-     
-    $("#showval").text(this.value);
-  }) 
-  
-  container.append(slider);
-  
-  labels.forEach(function(labelitem, index) {
-   		var el = $(`<label>${labelitem.label}</label>`).css('left',(labelitem.val/max * 100) + '%');
-    	container.append(el);
-  });
-};
-
-$( "#slider" ).sliderit(conf);
-
-
-// css
-#slider label {
+        <style>
+#slider span {
     position: absolute;
     width: 0;
     margin-left: 0;
@@ -86,3 +49,66 @@ $( "#slider" ).sliderit(conf);
     background: #4CAF50;
     cursor: pointer;
 }
+
+        </style>
+    </head>
+
+    <body>
+      
+        <div id="slider"></div>
+        <div id="showval">0</div>
+
+
+          <script  type="text/javascript">
+//js
+                var conf = [
+                    {val: 0, label: 'cold'}, 
+                    {val: 375, label: 'medium'}, 
+                    {val: 500, label:'hot'}
+                ];
+
+                $.fn.sliderit = function(config) {
+                    var settings = config;
+                    var min = settings[0].val;
+                    var max = settings[settings.length - 1].val;
+
+                        var container = $(this);
+
+
+                    //better to avoid selector
+                    //$(".slider").attr('max', max);
+                    //$(".slider").attr('min', min);
+                    //$(".slider").attr('value', min); 
+                    var slider = $(`<input type="range" max="${max}" min="${min}" value="${min}" class="slider" id="myslider">`);
+                        
+                        //attach eventlistener before append, avoid selector 
+                    slider.on('input', function() {
+                        var value = $(this).val();//this.value
+                        value = settings.reduce(function(prev,curt) {
+                            var prevDiff = Math.abs(prev.val - value);
+                            var curtDiff = Math.abs(curt.val - value);
+                            return prevDiff <= curtDiff ? prev : curt;
+                        }).val;   
+                        
+                        $(this).val(value);
+                        $("#showval").text(value);
+                    }) 
+                    
+                    container.append(slider);
+                    var labelContainer = $(`<label for="myslider"></label>`)
+                    settings.forEach(function(labelitem, index) {
+                            var el = $(`<span>${labelitem.label}</span>`).css('left',(labelitem.val/max * 100) + '%');
+                            labelContainer.append(el);
+                    });
+
+                    container.append(labelContainer);
+                };
+
+
+              $(document).ready(function() {
+                $( "#slider" ).sliderit(conf);
+              });
+
+          </script>
+    </body>
+</html>

@@ -62,7 +62,8 @@
     <script  type="text/javascript">
 
 
-
+let page = 0;
+        let scrollCount = 0
     $(document).ready(function(){
         //this is jquery event delegation
         /*$(".button-wrap").on("click", ".fetch-button", function() {
@@ -90,11 +91,11 @@
             }
         });
 
-        let page = 0;
-        let scrollCount = 0
+
         // Check every 200ms the scroll position
-        $("#list").on('scroll', throttle2(function(){
-            if (page >= 30) {//flag to stop loading
+        //$("#list").on('scroll', throttle2(function(){
+        $("#list").scroll(throttle2(function(){
+            if (page >= 30) {//flag to stop loading //if (response.data.total == response.data.start + response.data.count) { $(#list).off('scroll');
                 $("#list").off('scroll');
             }
             check_if_needs_more_content();
@@ -114,7 +115,11 @@
         // }
         
         //need both leading and trailings
-        function throttle2 (callback, limit) {
+        
+    });//ready
+
+
+    function throttle2 (callback, limit) {
             var wait = false;                  // Initially, we're not waiting
             return function () {               // We return a throttled function
                 scrollCount++;
@@ -132,7 +137,7 @@
             }
         }
         
-        var check_if_needs_more_content = (function() {
+    var check_if_needs_more_content = (function() {
             var cachedPromise = undefined;
             return function () {     
                 pixelsFromWindowBottomToBottom = $("#list")[0].scrollHeight - $("#list").scrollTop() - $("#list").height();
@@ -171,8 +176,7 @@
                 
                 }
             }
-        })();
-    });//ready
+    })();
     
     
     </script>

@@ -1,0 +1,65 @@
+<html>
+    <head>
+        <script
+            src="https://code.jquery.com/jquery-3.2.1.js"
+            integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+            crossorigin="anonymous">
+        </script>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+
+        <style>
+
+        </style>
+    </head>
+
+    <body>
+      <a href="">test anchor should be able to tabed</a>
+      <section>
+        <ul>
+            <li>test</li>
+            <li>li ul can not tabed/focus</li>
+        </ul>
+      </section>
+
+      <section>
+        <ul id="parent"></ul>
+      </section>
+
+
+
+          <script  type="text/javascript">
+
+              $(document).ready(function() {
+                let list = [
+                    {id: 0, name: "Yaobin"},
+                    {id: 1, name: "Tuo"},
+                    {id: 2, name: "Ling"},
+                ];
+                
+                let parentUl = document.getElementById('parent');
+                //prevent reflow performance concern
+                let fragment = document.createDocumentFragment();
+                list.forEach(function(e){
+                    let li = document.createElement("li");
+                    let anchor = document.createElement("a");
+                    anchor.textContent = e.name;
+                    anchor.href = "/" + e.name;
+                    anchor.setAttribute("aria-label", e.name + "profile page");
+                    li.appendChild(anchor);
+                    fragment.appendChild(li);
+                });
+                
+                parentUl.appendChild(fragment);
+                //event delegation
+                parentUl.addEventListener('click', function(e){
+                    console.log(e.target.textContent + " is clicked")
+                });
+
+              });
+
+          </script>
+    </body>
+</html>
+
+

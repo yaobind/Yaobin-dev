@@ -12,7 +12,7 @@
         <style>
             .nav-bar {
                 width: 100%;
-                position: relative;
+                position: fixed;
                 height: 50px;
                 background-color: beige;
                 position: fixed;
@@ -76,6 +76,30 @@
                 background-color: yellow;
             }
 
+            .container {
+                display: relative;
+                width: 50%;
+                top: 300px;
+                left: 25%;
+                background-color: grey;
+                flex-direction: column;
+            }
+
+            .body {
+                display: relative;
+            }
+
+            .post {
+                border: solid green 1px;
+                flex: 0 0 200px;
+                align-content: center;
+                background: white;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
         </style>
     </head>
 
@@ -96,12 +120,36 @@
             </form>
         </nav>
 
+        <section class="container flexbox">
+            <article class="post">1</article>
+            <article class="post">2</article>
+            <article class="post">3</article>
+            <article class="post">4</article>
+            <article class="post">5</article>
+            <article class="post">6</article>
+        </section>
+
 
 
           <script  type="text/javascript">
+                var debounce = function (func, waitTime) {
+                    
+                    var timeout;
+                    
+                    return function debounced () {
+                        var obj = this, args = arguments;
+                        if (timeout) {
+                                clearTimeout(timeout);
+                        }
+                    
+                        timeout = setTimeout(function() {
+                                func.apply(obj, args);
+                        }, waitTime || 100); 
+                    };
+                }
 
               $(document).ready(function() {
-                    $(".search-input").on("input", _.debounce(function(){
+                    $(".search-input").on("input", debounce(function(){
                         cleanUpSuggestions();
                         var content = $(this).val();
                         if (!content) {

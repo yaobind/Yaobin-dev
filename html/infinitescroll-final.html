@@ -1,0 +1,112 @@
+<html>
+    <head>
+        <script
+        src="https://code.jquery.com/jquery-3.2.1.js"
+        integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+        crossorigin="anonymous"></script>
+    
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.min.js"></script>
+    
+        <style>
+        #list {
+            height: 300px; 
+            overflow: scroll;
+        }  
+        </style>
+    </head>
+    
+    <body>
+        <div class="button-wrap" id="wrap">
+            <button class="fetch-button">fetch</button>
+            <button class="fake-button">fake</button>
+        </div>
+        
+        <p id="scrollCount">0</p>
+        <p id="pageCount">0</p>
+        <p id="content">loading...</p>
+        <ul id="list">
+            <li>A</li>
+            <li>Engineer</li>
+            <li>A</li>
+            <li>Engineer</li>
+            <li>A</li>
+            <li>Engineer</li>
+            <li>A</li>
+            <li>Engineer</li>
+            <li>A</li>
+            <li>Engineer</li>
+            <li>A</li>
+            <li>Engineer</li>
+            <li>A</li>
+            <li>Engineer</li>
+            <li>A</li>
+            <li>Engineer</li>
+        </ul>
+        
+        <script  type="text/javascript">
+    
+$(document).ready(function(){
+    $("#list").scroll(throttle(function(){
+        checkLoad();
+        console.log($(this));
+    }, 500));
+});
+
+
+function throttle(callback, waitTime) {
+    var wait = false;
+    return function() {
+        var obj = this;
+        var args = arguments;
+        if (wait) {
+            return;
+        }
+        
+        callback.apply(obj, args);//leading;
+        wait = true;
+        
+        setTimeout(function(){
+            callback.apply(obj, args);//trailing;
+            wait = false;
+        }, waitTime || 500);    
+        
+    }
+}
+
+function checkLoad() {//off the listener if necessary
+    var list = $("#list");
+    var bottomToScrollBottom = list[0].scrollHeight - list.scrollTop() - list.height();
+    if (bottomToScrollBottom < 10) {
+        fetch();
+    }
+}
+
+function fetch() {
+    var promise = $.get("http://demo9043759.mockable.io/hello").promise();
+    promise.done(function(response) {
+        if (response.data && response.data.items && response.data.items.length) {
+            load(response.data.items);
+            //if (response.data.total === response.data.last) {
+                //$("#list").off('scroll');
+            //}
+        }        
+    }, function(error) {
+        console.log(error);
+    });
+}
+
+
+function load(items) {
+    var docFrag = $(document.createDocumentFragment());
+    items.forEach(function(item){
+        docFrag.append($(`<li>${item.name}</li>`));
+        docFrag.append($(`<li>${item.position}</li>`));
+    });
+    
+    $("#list").append(docFrag);
+}
+
+
+</script>
+</body>
+</html>
