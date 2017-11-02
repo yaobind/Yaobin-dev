@@ -296,94 +296,92 @@
                     }
                 }
 
-                function input(char) {
-                    if (isNum(char)) {
-                        if (shouldResetIfNumber) {
-                        stack.pop();
-                        stack.push(parseInt(char));
-                        shouldResetIfNumber = false;
-                        } else if (isNum(stack.peek())) {//continousely input number
-                        const n = stack.pop();
-                        stack.push(n * 10 + parseInt(char));
-                        } else {//new number, last input is operator
-                        stack.push(parseInt(char));
-                        }
-
-                        display_obj.display_val = stack.peek();
-
-                    } else if (char !== '=') {//+-*/
-                        shouldResetIfNumber = false;
-                        display_obj.display_val = reduce(stack);//should remove the tail operator;
-                        stack.push(char);
-
-                    } else {// =
-                        display_obj.display_val = reduce(stack);
-                        shouldResetIfNumber = true;
-
-                        save();
-                    }
-                }
-
+                
                 function clearStack(stak) {
                     while (!stak.isEmpty()) {
                         stak.pop();
                     }
                 }
 
-                function reduce(stak) {//remove trailing operator, reduce stack to single result
-                    //cases: 0  |  0 +  |  0 + 1 | 
-                    if (stak.isEmpty()) {
-                        throw new Error("empty stack in reduce function");
+
+                function input(char) {
+                    if (isNum(char)) {
+                        if (shouldResetIfNumber) {
+                            stack.pop();
+                            stack.push(parseInt(char));
+                        } else if(isNum(stack.peek())){//last is num
+                            const n = stack.pop();
+                            stack.push(n * 10 + parseInt(char));
+                        } else {//last is operator
+                            stack.push(parseInt(char));
+                        }
+                        
+                        display_obj.display_val = stack.peek();
+                        
+                                
+                    } else if (char === "=") {
+                        display_obj.display_val = reduce(stack);
+                        shouldResetIfNumber = true;
+                        save();
+                    } else {
+                        shouldResetIfNumber = false;
+                        display_obj.display_val = reduce(stack);
+                        stack.push(char);
+                        
                     }
-                    
+                }
+
+                function reduce(stak) {
+                    //case 1; 1+2; 1+
                     if (!isNum(stak.peek())) {
                         stak.pop();
                     }
-
-                    const values = new Stack();
-                    const operators = new Stack();
-                    while (!stak.isEmpty()) {
-                        values.push(stak.pop());
-                        if (!stak.isEmpty()) {
-                        operators.push(stak.pop());
-                        }
+                    
+                    if (stak.size() === 1) {
+                        return stack.peek();
                     }
-
-                    //stack always start with number and should at least has 1 number, cannot start with operator
-                    var result = values.pop();
-                    if (!values.isEmpty()) {
-                        var second = values.pop();
-                        var operator = operators.pop();
-                        result = calculate(result, second, operator);
+                    
+                    if (stak.size() !== 3) {
+                        throw new Error("stack size is not 3");
                     }
-
-                    stak.push(result);
-                    return result;
+                    
+                    const right = stack.pop();
+                    const operator = stack.pop();
+                    const left = stack.pop();
+                    stack.push(calculate(left, right, operator));
+                    return stack.peek();
+                    
                 }
 
-                function calculate(first, second, operator) {
-                    var res = 0;
+
+                function calculate(left, right, operator) {
+                    var result = 0;
                     switch(operator) {
-                        case "+":
-                        res = first + second;
-                        break;
-                        case "-":
-                        res = first - second;
-                        break;
-                        case "*":
-                        res = first * second;
-                        break;
-                        case "/": 
-                        res = first / second;
-                        break;
+                        case '+':
+                            result = left + right;
+                            break;
+                        case '-':
+                            result = left - right;
+                            break;
+                        case '*':
+                            result = left * right;
+                            break;
+                        case '/':
+                            result = left / right;
+                            break;
+                            
+                        default:
+                            break;
+                            
                     }
+                    return result;
+                                
+                }
 
-                    return res;
-                }
-    
+
                 function isNum(val) {
-                        return !["+", "-", "*", "/", "="].includes(val);
-                }
+                    return !['+','-','*','/','='].includes(val);
+                }     
               </script>
         </body>
     </html>
